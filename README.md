@@ -2,7 +2,7 @@
 
 1 . Clone el projecto
 
-2 . Vaya la ruta donde ha clonado el proyecto en su maquina y en su terminal ejecute los siguientes comandos dependiendo el sistema operativo.
+2 . Active el ambiente virtual
 
 
 ### ingrese al ambiente virtual
