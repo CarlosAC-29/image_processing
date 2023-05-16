@@ -5,14 +5,14 @@ from denoise import denoise_image
 from borders import borders_image
 
 PAGES = {
+    "Pre process":{
+        "Estandarization": estandarization,
+        "Denoise": denoise_image
+    },
     "Process": {
         "Segmentation": process,
         "Borders": borders_image
     },
-    "Pre process":{
-        "Estandarization": estandarization,
-        "Denoise": denoise_image
-    }
 }
 
 # Mostrar selectbox para seleccionar la página

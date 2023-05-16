@@ -37,9 +37,12 @@ def denoise_image():
             metodo = st.radio(
             "Metodo de remoción de ruido",
             ('mean filter', 'median filter'))
-            standardize = st.button("standardize")
+            standardize = st.button("Denoise")
+
+            
 
             if standardize and metodo == 'mean filter':
+
 
                 filtered_image = mean_filter_image(image_array)
 
@@ -50,16 +53,6 @@ def denoise_image():
                 reconstructed_image = nib.Nifti1Image(filtered_image, affine)
                 output_path = os.path.join("temp", nombre_archivo+".nii.gz")
                 nib.save(reconstructed_image, output_path)
-                
-                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
-
-                ax1.imshow(filtered_image[:, :, 24])
-                ax1.set_title('Imagen')
-                
-                ax2.hist(filtered_image[filtered_image>0.01].flatten(), 100, alpha=0.5)
-                ax2.set_title('Histograma')
-
-                st.pyplot(fig)
 
                 st.success("Imagen estandarizada guardada correctamente.")
             elif standardize and metodo == 'median filter':
@@ -74,14 +67,24 @@ def denoise_image():
                 output_path = os.path.join("temp", nombre_archivo+".nii.gz")
                 nib.save(reconstructed_image, output_path)
                 
-                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+                fig, ax1 = plt.subplots(1, figsize=(10, 5))
 
                 ax1.imshow(filtered_image[:, :, 24])
                 ax1.set_title('Imagen')
-                
-                ax2.hist(filtered_image[filtered_image>0.01].flatten(), 100, alpha=0.5)
-                ax2.set_title('Histograma')
+            
 
                 st.pyplot(fig)
 
                 st.success("Imagen estandarizada guardada correctamente.")
+
+            if os.path.exists("temp"+"/"+ nombre_archivo+".nii.gz"):
+
+                image_data_view = nib.load("temp"+"/"+ nombre_archivo+".nii.gz")
+                image_array_view = image_data_view.get_fdata()
+                eje = st.slider('#',0,np.shape(image_array_view)[2]-1)
+                fig, (ax1, ax2) = plt.subplots(1,2, figsize=(10, 5))
+                ax1.imshow(image_array_view[:, :, eje])
+                ax1.set_title('Remocion de ruido')
+                ax2.imshow(image_array[:,:,eje])
+                ax2.set_title('Original')
+                st.pyplot(fig)

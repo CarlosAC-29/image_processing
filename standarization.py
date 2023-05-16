@@ -6,6 +6,7 @@ import os
 from standardization.rescale import rescale_image
 from standardization.zscore import zscore_image
 from standardization.whiteStripe import whitestripe_image
+from standardization.histogram_matching import histogram_matching
 
 def estandarization():
     if not os.path.exists("uploads"):
@@ -31,8 +32,6 @@ def estandarization():
             else:
                 input_file_path = input_file
 
-            image_data_base = nib.load("standardization/example/T1.nii.gz")
-            image_array_base = image_data_base.get_fdata()
             image_data = nib.load(input_file_path)
             image_array = image_data.get_fdata()
 
@@ -42,35 +41,77 @@ def estandarization():
             st.pyplot(fig_original)
 
             nombre_archivo = st.text_input("Nombre del archivo estandarizado", "estandarizada")
-            metodo = st.radio("Método de estandarización", ('rscale', 'z-score', 'white stripe'))
-            standardize = st.button("Estandarizar")
+            metodo = st.radio("Método de estandarización", ('rescale', 'z-score', 'white stripe', 'histogram matching'))
+            if metodo == 'histogram matching':
+                target = st.file_uploader('Seleccionar archivo', key='target')
+                standardize = st.button("Estandarizar histogram")
+                if target is not None:
+                    with open(os.path.join("histogram", target.name), "wb") as f:
+                        f.write(target.read())
+                        target_file_path = os.path.join("histogram", target.name)
+                        image_data_target = nib.load(target_file_path)
+                        ar = image_data_target.get_fdata()
+                if standardize :
+                    estandarized_image_hist = histogram_matching(image_array, ar)
+                    affine = image_data.affine
 
-            if standardize:
-                if metodo == 'rscale':
-                    estandarized_image = rescale_image(image_array)
-                elif metodo == 'z-score':
-                    estandarized_image = zscore_image(image_array)
-                elif metodo == 'white stripe':
-                    estandarized_image = whitestripe_image(image_array)
+                    # Reconstruir la imagen estandarizada con la información de afine
+                    reconstructed_image = nib.Nifti1Image(estandarized_image_hist, affine)
+                    output_path = os.path.join("temp", nombre_archivo + ".nii.gz")
+                    nib.save(reconstructed_image, output_path)
+                    # eje = 1
 
-                # Obtener la información de afine de la imagen original
-                affine = image_data.affine
+                    # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+                    
+                    # ax1.imshow(estandarized_image_hist[:, :, 20])
+                    # ax1.set_title('Imagen')
+                    
 
-                # Reconstruir la imagen estandarizada con la información de afine
-                reconstructed_image = nib.Nifti1Image(estandarized_image, affine)
-                output_path = os.path.join("temp", nombre_archivo + ".nii.gz")
-                nib.save(reconstructed_image, output_path)
+                    # ax2.hist(estandarized_image_hist[estandarized_image_hist>0.01].flatten(), 100, alpha=0.5)
+                    # ax2.set_title('Histograma')
 
-                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
-                ax1.imshow(estandarized_image[:, :, 20])
+                    # st.pyplot(fig)
+
+                    st.success("Imagen estandarizada guardada correctamente.")
+            else:
+                standardize = st.button("Estandarizar")
+                if standardize:
+                    if metodo == 'rescale':
+                        estandarized_image = rescale_image(image_array)
+                    elif metodo == 'z-score':
+                        estandarized_image = zscore_image(image_array)
+                    elif metodo == 'white stripe':
+                        estandarized_image = whitestripe_image(image_array)
+
+                    affine = image_data.affine
+
+                    # Reconstruir la imagen estandarizada con la información de afine
+                    reconstructed_image = nib.Nifti1Image(estandarized_image, affine)
+                    output_path = os.path.join("temp", nombre_archivo + ".nii.gz")
+                    nib.save(reconstructed_image, output_path)
+
+                    # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+                    
+
+                    # ax1.imshow(estandarized_image[:, :, 20])
+                    # ax1.set_title('Imagen')
+                    
+
+                    # ax2.hist(estandarized_image[estandarized_image>0.01].flatten(), 100, alpha=0.5)
+                    # ax2.set_title('Histograma')
+
+                    # st.pyplot(fig)
+
+                    st.success("Imagen estandarizada guardada correctamente.")
+    
+            if os.path.exists("temp"+"/"+nombre_archivo+".nii.gz"):
+
+                image_data_view = nib.load("temp"+"/"+ nombre_archivo+".nii.gz")
+                image_array_view = image_data_view.get_fdata()
+                eje = st.slider('#',0,np.shape(image_array_view)[2]-1)
+                fig, (ax1, ax2) = plt.subplots(1,2, figsize=(10, 5))
+                ax1.imshow(image_array_view[:, :, eje])
                 ax1.set_title('Imagen')
-                
-                ax2.hist(image_array_base[image_array_base>0.01].flatten(), 100, alpha=0.5)
+                ax2.hist(image_array_view[image_array_view>0.01].flatten(), 100, alpha=0.5)
                 ax2.set_title('Histograma')
-
-                ax2.hist(estandarized_image[estandarized_image>0.01].flatten(), 100, alpha=0.5)
-                ax2.set_title('Histograma')
-
                 st.pyplot(fig)
-
-                st.success("Imagen estandarizada guardada correctamente.")

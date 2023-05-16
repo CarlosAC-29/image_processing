@@ -34,25 +34,28 @@ def borders_image():
             image_array = image_data.get_fdata()
             nombre_archivo = st.text_input("Nombre del archivo con borders","Bordered")
 
-            borderd_image = central_dif(image_array)
-
-            # Obtener la información de afine de la imagen original
-            affine = image_data.affine
-
-            # Reconstruir la imagen estandarizada con la información de afine
-            reconstructed_image = nib.Nifti1Image(borderd_image, affine)
-            output_path = os.path.join("temp", nombre_archivo+".nii.gz")
-            nib.save(reconstructed_image, output_path)
+            process = st.button("Process")
             
-            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+            if process :
+                borderd_image = central_dif(image_array)
 
-            ax1.imshow(borderd_image[:, :, 24])
-            ax1.set_title('Imagen')
-            
-            ax2.hist(borderd_image[borderd_image>0.01].flatten(), 100, alpha=0.5)
-            ax2.set_title('Histograma')
+                # Obtener la información de afine de la imagen original
+                affine = image_data.affine
 
-            st.pyplot(fig)
+                # Reconstruir la imagen estandarizada con la información de afine
+                reconstructed_image = nib.Nifti1Image(borderd_image, affine)
+                output_path = os.path.join("temp", nombre_archivo+".nii.gz")
+                nib.save(reconstructed_image, output_path)
+                
+                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
-            st.success("Imagen estandarizada guardada correctamente.")
+                ax1.imshow(borderd_image[:, :, 24])
+                ax1.set_title('Imagen')
+                
+                ax2.hist(borderd_image[borderd_image>0.01].flatten(), 100, alpha=0.5)
+                ax2.set_title('Histograma')
+
+                st.pyplot(fig)
+
+                st.success("Imagen estandarizada guardada correctamente.")
             
