@@ -1,15 +1,14 @@
 # Procesamiento de imagenes 
 
-1 . Clone el projecto
+## 1 . Clone el projecto
 
-2 . Active el ambiente virtual
+## 2 . Active el ambiente virtual
 
 ### ingrese al ambiente virtual
 ```bash
   ./env/Scripts/activate
 ```
-
-3. Inicialice el proyecto
+## 3 . Inicialice el proyecto
 ### Luego use el comando 
 
 ```bash
