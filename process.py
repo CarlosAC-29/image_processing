@@ -5,6 +5,7 @@ import nibabel as nib
 import os
 from segmentations.thresholding import threshold
 from segmentations.kmeans import kmeans_segmentation
+from segmentations.regionGrowing import region_growing_image
 
 def process ():
     st.title("Segmentation")
@@ -89,8 +90,14 @@ def process ():
 
         if( tipo_segmentacion ==  'Region Growing'):
             tolerancia = st.text_input("Tolerancia:")
-            tau = st.text_input("TAU:")
-            seed_x = st.slider("Seed initial position X", 0, 100)
-            seed_y = st.slider("Seed initial position Y", 0, 100)
-            seed_z = st.slider("Seed initial position Z", 0, 100)
+            seed_x = st.slider("Seed initial position X", 0, np.shape(image)[0]-1)
+            seed_y = st.slider("Seed initial position Y", 0, np.shape(image)[1]-1)
+            seed_z = st.slider("Seed initial position Z", 0, np.shape(image)[2]-1)
             buttons_Region_Growing = st.button("segmentate")
+            if buttons_Region_Growing:
+                segmentation = region_growing_image(image, int(seed_x), int(seed_y), int(seed_z), int(tolerancia))
+                fig_procs, ax_procs = plt.subplots()
+                ax_procs.imshow(segmentation[:,:,eje_image])
+                st.pyplot(fig_procs)
+            else:
+                st.warning("Primero cargue una imagen antes de realizar la segmentación")

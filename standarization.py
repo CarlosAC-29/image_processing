@@ -108,10 +108,7 @@ def estandarization():
 
                 image_data_view = nib.load("temp"+"/"+ nombre_archivo+".nii.gz")
                 image_array_view = image_data_view.get_fdata()
-                eje = st.slider('#',0,np.shape(image_array_view)[2]-1)
-                fig, (ax1, ax2) = plt.subplots(1,2, figsize=(10, 5))
-                ax1.imshow(image_array_view[:, :, eje])
-                ax1.set_title('Imagen')
-                ax2.hist(image_array_view[image_array_view>0.01].flatten(), 100, alpha=0.5)
-                ax2.set_title('Histograma')
+                fig, (ax1) = plt.subplots(1, figsize=(10, 5))
+                ax1.hist(image_array_view[image_array_view>0.01].flatten(), 100)
+                ax1.set_title('Histograma')
                 st.pyplot(fig)

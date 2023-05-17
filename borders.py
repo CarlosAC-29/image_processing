@@ -47,13 +47,11 @@ def borders_image():
                 output_path = os.path.join("temp", nombre_archivo+".nii.gz")
                 nib.save(reconstructed_image, output_path)
                 
-                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+                fig, ax1 = plt.subplots(1, figsize=(10, 5))
 
                 ax1.imshow(borderd_image[:, :, 24])
                 ax1.set_title('Imagen')
                 
-                ax2.hist(borderd_image[borderd_image>0.01].flatten(), 100, alpha=0.5)
-                ax2.set_title('Histograma')
 
                 st.pyplot(fig)
 
