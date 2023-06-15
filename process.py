@@ -74,16 +74,38 @@ def process ():
                     st.warning("Primero cargue una imagen antes de realizar la segmentación")
 
 
-        if( tipo_segmentacion ==  'kmeans'):
+        if tipo_segmentacion == 'kmeans':
             tolerancia = st.text_input("Tolerancia:")
             number_of_k = st.text_input("K #:")
             iterations = st.text_input("Iterations:")
             buttons_kmeans = st.button("segmentate")
+            
             if buttons_kmeans:
+                # Realizar la segmentación utilizando K-means
                 segmentation = kmeans_segmentation(image, int(number_of_k), int(tolerancia), int(iterations))
+                
+                # Mostrar la imagen segmentada
                 fig_procs, ax_procs = plt.subplots()
                 ax_procs.imshow(segmentation[:,:,eje_image])
                 st.pyplot(fig_procs)
+                
+                # Obtener la información de afine de la imagen original
+                affine = image_data.affine
+                
+                # Reconstruir la imagen estandarizada con la información de afine
+                reconstructed_image = nib.Nifti1Image(segmentation.astype(np.float32), affine)
+                
+                # Guardar la imagen estandarizada en formato NIfTI
+                output_path = os.path.join("temp", "seg.nii.gz")
+                nib.save(reconstructed_image, output_path)
+                
+                # Agregar un enlace para descargar el archivo NIfTI generado
+                st.success("Imagen estandarizada guardada correctamente.")
+                # Agregar el botón de descarga
+                if os.path.exists(output_path):
+                    with open(output_path, "rb") as file:
+                        st.download_button("Descargar archivo", data=file, file_name="seg.nii.gz")
+
             else:
                 st.warning("Primero cargue una imagen antes de realizar la segmentación")
 

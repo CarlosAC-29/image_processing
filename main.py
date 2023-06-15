@@ -3,15 +3,18 @@ from process import process
 from standarization import estandarization
 from denoise import denoise_image
 from borders import borders_image
+from register import register
+from visualizar import visualizar_page
 
 PAGES = {
     "Pre process":{
         "Estandarization": estandarization,
-        "Denoise": denoise_image
+        "Denoise": denoise_image,
     },
     "Process": {
         "Segmentation": process,
-        "Borders": borders_image
+        "Registro": register,
+        "Visualizar" : visualizar_page,
     },
 }
 

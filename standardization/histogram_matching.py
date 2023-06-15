@@ -2,30 +2,18 @@ import nibabel as nib
 import numpy as np
 import matplotlib.pyplot as plt
 
-def histogram_matching(data_orig, data_target):
+def histogram_matching(objective_data, origin_data,k):
+    # Reshape the data arrays to 1D arrays
+    objective_flat = objective_data.get_fdata().flatten()
+    origin_flat = origin_data.get_fdata().flatten()
 
 
-    # Redimensionar los datos en un solo arreglo 1D
-    flat_orig = data_orig.flatten()
-    flat_target = data_target.flatten()
+    reference_landmarks = np.percentile(objective_flat, np.linspace(0, 100, k))
+    transform_landmarks = np.percentile(origin_flat, np.linspace(0, 100, k))
 
-    # Calcular los histogramas acumulativos
-    hist_orig, bins = np.histogram(flat_orig, bins=256, range=(0, 255), density=True)
-    hist_orig_cumulative = hist_orig.cumsum()
-    hist_target, _ = np.histogram(flat_target, bins=256, range=(0, 255), density=True)
-    hist_target_cumulative = hist_target.cumsum()
+    piecewise_func = np.interp(origin_flat, transform_landmarks, reference_landmarks)
 
-    # Ajustar los valores extremos
-    min_value = min(flat_orig.min(), flat_target.min())
-    max_value = max(flat_orig.max(), flat_target.max())
 
-    # Mapear los valores de la imagen de origen a los valores de la imagen objetivo
-    lut = np.interp(hist_orig_cumulative, hist_target_cumulative, bins[:-1])
+    transformed_data = piecewise_func.reshape(origin_data.shape)
 
-    # Aplicar el mapeo a los datos de la imagen de origen
-    data_matched = np.interp(data_orig, bins[:-1], lut)
-
-    # Ajustar los valores extremos nuevamente
-    data_matched = np.clip(data_matched, min_value, max_value)
-
-    return data_matched
+    return transformed_data

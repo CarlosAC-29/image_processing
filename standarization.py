@@ -44,34 +44,21 @@ def estandarization():
             metodo = st.radio("Método de estandarización", ('rescale', 'z-score', 'white stripe', 'histogram matching'))
             if metodo == 'histogram matching':
                 target = st.file_uploader('Seleccionar archivo', key='target')
+                number_of_k = st.text_input("K #:")
                 standardize = st.button("Estandarizar histogram")
                 if target is not None:
                     with open(os.path.join("histogram", target.name), "wb") as f:
                         f.write(target.read())
                         target_file_path = os.path.join("histogram", target.name)
                         image_data_target = nib.load(target_file_path)
-                        ar = image_data_target.get_fdata()
                 if standardize :
-                    estandarized_image_hist = histogram_matching(image_array, ar)
+                    estandarized_image_hist = histogram_matching(image_data_target, image_data, int(number_of_k))
                     affine = image_data.affine
 
                     # Reconstruir la imagen estandarizada con la información de afine
                     reconstructed_image = nib.Nifti1Image(estandarized_image_hist, affine)
                     output_path = os.path.join("temp", nombre_archivo + ".nii.gz")
                     nib.save(reconstructed_image, output_path)
-                    # eje = 1
-
-                    # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
-                    
-                    # ax1.imshow(estandarized_image_hist[:, :, 20])
-                    # ax1.set_title('Imagen')
-                    
-
-                    # ax2.hist(estandarized_image_hist[estandarized_image_hist>0.01].flatten(), 100, alpha=0.5)
-                    # ax2.set_title('Histograma')
-
-                    # st.pyplot(fig)
-
                     st.success("Imagen estandarizada guardada correctamente.")
             else:
                 standardize = st.button("Estandarizar")
@@ -89,24 +76,12 @@ def estandarization():
                     reconstructed_image = nib.Nifti1Image(estandarized_image, affine)
                     output_path = os.path.join("temp", nombre_archivo + ".nii.gz")
                     nib.save(reconstructed_image, output_path)
-
-                    # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
-                    
-
-                    # ax1.imshow(estandarized_image[:, :, 20])
-                    # ax1.set_title('Imagen')
-                    
-
-                    # ax2.hist(estandarized_image[estandarized_image>0.01].flatten(), 100, alpha=0.5)
-                    # ax2.set_title('Histograma')
-
-                    # st.pyplot(fig)
-
                     st.success("Imagen estandarizada guardada correctamente.")
     
             if os.path.exists("temp"+"/"+nombre_archivo+".nii.gz"):
 
                 image_data_view = nib.load("temp"+"/"+ nombre_archivo+".nii.gz")
+                st.write(nombre_archivo)
                 image_array_view = image_data_view.get_fdata()
                 fig, (ax1) = plt.subplots(1, figsize=(10, 5))
                 ax1.hist(image_array_view[image_array_view>0.01].flatten(), 100)

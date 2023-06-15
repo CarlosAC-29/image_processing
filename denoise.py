@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import nibabel as nib
 import os
 from denoising.mean_filter import mean_filter_image
+from denoising.mean_filter import mean_filter_with_edges
 from denoising.median_filter import median_filter
+from denoising.median_filter import medianFilterBorders
 
 def denoise_image():
     if not os.path.exists("uploads"):
@@ -36,7 +38,7 @@ def denoise_image():
             nombre_archivo = st.text_input("Nombre del archivo con remoción de ruido","Denoised")
             metodo = st.radio(
             "Metodo de remoción de ruido",
-            ('mean filter', 'median filter'))
+            ('mean filter', 'median filter', 'median filter with edges'))
             standardize = st.button("Denoise")
 
             
@@ -58,6 +60,50 @@ def denoise_image():
             elif standardize and metodo == 'median filter':
 
                 filtered_image = median_filter(image_array)
+
+                # Obtener la información de afine de la imagen original
+                affine = image_data.affine
+
+                # Reconstruir la imagen estandarizada con la información de afine
+                reconstructed_image = nib.Nifti1Image(filtered_image, affine)
+                output_path = os.path.join("temp", nombre_archivo+".nii.gz")
+                nib.save(reconstructed_image, output_path)
+                
+                fig, ax1 = plt.subplots(1, figsize=(10, 5))
+
+                ax1.imshow(filtered_image[:, :, 24])
+                ax1.set_title('Imagen')
+            
+
+                st.pyplot(fig)
+
+                st.success("Imagen estandarizada guardada correctamente.")
+            
+            elif standardize and metodo == 'median filter with edges':
+                
+                filtered_image = medianFilterBorders(image_array)
+
+                # Obtener la información de afine de la imagen original
+                affine = image_data.affine
+
+                # Reconstruir la imagen estandarizada con la información de afine
+                reconstructed_image = nib.Nifti1Image(filtered_image, affine)
+                output_path = os.path.join("temp", nombre_archivo+".nii.gz")
+                nib.save(reconstructed_image, output_path)
+                
+                fig, ax1 = plt.subplots(1, figsize=(10, 5))
+
+                ax1.imshow(filtered_image[:, :, 24])
+                ax1.set_title('Imagen')
+            
+
+                st.pyplot(fig)
+
+                st.success("Imagen estandarizada guardada correctamente.")
+            
+            elif standardize and metodo == 'mean filter with edges':
+                
+                filtered_image = mean_filter_with_edges(image_array)
 
                 # Obtener la información de afine de la imagen original
                 affine = image_data.affine
