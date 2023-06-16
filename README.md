@@ -1,15 +1,21 @@
 # Procesamiento de imagenes 
 
-## 1 . Clone el projecto
+Siga este paso a paso para usar instalar la aplicacion.
 
-## 2 . Active el ambiente virtual
-
-### ingrese al ambiente virtual
+### 1. Crear el ambiente virtual:
 ```bash
-  ./env/Scripts/activate
+  virtualenv nombre_del_ambiente
 ```
-## 3 . Inicialice el proyecto
-### Luego use el comando 
+### 2. Activar ambiente virtual
+```bash
+    .cd nombre_del_ambiente/Scripts/activate
+```
+### 3 . Instalar dependencias
+
+```bash
+  pip install -r requirements.txt
+```
+### 4 . Inicialice el proyecto
 
 ```bash
   streamlit run main.py
