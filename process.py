@@ -75,14 +75,13 @@ def process ():
 
 
         if tipo_segmentacion == 'kmeans':
-            tolerancia = st.text_input("Tolerancia:")
             number_of_k = st.text_input("K #:")
             iterations = st.text_input("Iterations:")
             buttons_kmeans = st.button("segmentate")
             
             if buttons_kmeans:
                 # Realizar la segmentación utilizando K-means
-                segmentation = kmeans_segmentation(image, int(number_of_k), int(tolerancia), int(iterations))
+                segmentation = kmeans_segmentation(image,int(iterations), int(number_of_k))
                 
                 # Mostrar la imagen segmentada
                 fig_procs, ax_procs = plt.subplots()
