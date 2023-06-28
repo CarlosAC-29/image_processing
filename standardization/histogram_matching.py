@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 def histogram_matching(objective_data, origin_data,k):
     # Reshape the data arrays to 1D arrays
-    objective_flat = objective_data.get_fdata().flatten()
-    origin_flat = origin_data.get_fdata().flatten()
+    objective_flat = objective_data
+    origin_flat = origin_data
 
 
     reference_landmarks = np.percentile(objective_flat, np.linspace(0, 100, k))
