@@ -61,15 +61,17 @@ def segmentar_process ():
                 t1_TOL = st.text_input("TOL (T1):", key="TOL_t1")
 
                 st.title("IR")
-                number_TAU_t1 = st.text_input("TAU # (IR):", key="TAU_ir")
-                ir_TOL = st.text_input("TOL (IR):", key="TOL_ir")
+                # number_TAU_t1 = st.text_input("TAU # (IR):", key="TAU_ir")
+                # ir_TOL = st.text_input("TOL (IR):", key="TOL_ir")
+                number_of_k_ir = st.text_input("K # (IR):", key="k_ir")
+                iterations_ir = st.text_input("Iterations (IR):", key="iter_ir")
 
                 buttons_isodata= st.button("Segmentate")
 
                 if buttons_isodata:
                     # Realizar la segmentación utilizando K-means
                     segmentation_t1 = threshold(image_T1_data,int(number_TAU_t1), int(t1_TOL))
-                    segmentation_ir = threshold(image_IR_data,int(number_TAU_t1), int(ir_TOL))
+                    segmentation_ir = kmeans_segmentation(image_IR_data,int(iterations_ir), int(number_of_k_ir))
                     Finish_t1 = "Success"
                     Finish_ir = "Success"
             
@@ -82,17 +84,19 @@ def segmentar_process ():
                 seed_z_t1 = st.slider("Seed initial position Z", 0, np.shape(image_T1_data)[2]-1)
 
                 st.title("IR")
-                tolerancia_ir = st.text_input("Tolerancia:")
-                seed_x_ir = st.slider("Seed initial position X", 0, np.shape(image_IR_data)[0]-1)
-                seed_y_ir = st.slider("Seed initial position Y", 0, np.shape(image_IR_data)[1]-1)
-                seed_z_ir = st.slider("Seed initial position Z", 0, np.shape(image_IR_data)[2]-1)
+                # tolerancia_ir = st.text_input("Tolerancia:")
+                # seed_x_ir = st.slider("Seed initial position X", 0, np.shape(image_IR_data)[0]-1)
+                # seed_y_ir = st.slider("Seed initial position Y", 0, np.shape(image_IR_data)[1]-1)
+                # seed_z_ir = st.slider("Seed initial position Z", 0, np.shape(image_IR_data)[2]-1)
+                number_of_k_ir = st.text_input("K # (IR):", key="k_ir")
+                iterations_ir = st.text_input("Iterations (IR):", key="iter_ir")
 
                 buttons_isodata= st.button("Segmentate", key="tol_ir_region")
 
                 if buttons_isodata:
                     # Realizar la segmentación utilizando K-means
                     segmentation_t1 = region_growing_image(image_T1_data,int(seed_x_t1),int(seed_y_t1), int(seed_z_t1),int(tolerancia_t1))
-                    segmentation_ir = region_growing_image(image_IR_data,int(seed_x_ir), int(seed_y_ir), int(seed_z_ir), int(tolerancia_ir))
+                    segmentation_ir = kmeans_segmentation(image_IR_data,int(iterations_ir), int(number_of_k_ir))
                     Finish_t1 = "Success"
                     Finish_ir = "Success"
 
