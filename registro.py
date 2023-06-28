@@ -26,7 +26,8 @@ def registro_process ():
 
         
         if os.path.exists(T1_image) and os.path.exists(IR_image) and os.path.exists(Flair_original) and os.path.exists(T1_original) and os.path.exists(IR_original):
-
+            scale_number= st.text_input("Defina una escala", key="scale_number")
+            print(scale_number)
             volumes = st.button("Calcular volumenes")
 
             if volumes : 
@@ -49,7 +50,7 @@ def registro_process ():
                 # Realizar la segmentación utilizando K-means
                 registro_t1 = registro_rigido("t1_reg", T1_original, Flair_original, T1_image)
                 registro_ir = registro_rigido("ir_reg", IR_original, Flair_original, IR_image)
-                Image_final = remove_brain()
+                Image_final = remove_brain(float(scale_number))
                 
                 # Mostrar la imagen segmentada
                 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(10, 5))
@@ -68,7 +69,7 @@ def registro_process ():
                 st.success("Materia Girs: "+ str(counts[1]))
                 st.success("Materia Blanca: " + str(counts[2]))
                 st.success("Lesiones: " + str(counts[3]))
-                st.success("Liquido cefalorraquideo: " + str(counts[0]))
+                st.success("Liquido cefalorraquideo: " + str(counts[4]))
 
 
 

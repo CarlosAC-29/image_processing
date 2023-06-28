@@ -42,7 +42,7 @@ def registro_rigido(name, imagen_movil, imagen_referencia, imagen_seg, output_fo
 
     return matriz_registrada
 
-def remove_brain(output_folder="./temp/", uploads_folder="./uploads/"):
+def remove_brain(scale_num, output_folder="./temp/", uploads_folder="./uploads/"):
     # Cargar la imagen NIfTI
 
     nifti_img = nib.load(
@@ -53,7 +53,7 @@ def remove_brain(output_folder="./temp/", uploads_folder="./uploads/"):
     data = nifti_img.get_fdata()
 
     # Definir escalas espaciales
-    scales = [13.5]  # Escalas para aplicar filtros gaussianos
+    scales = [scale_num]  # Escalas para aplicar filtros gaussianos
 
     # Aplicar filtros gaussianos en diferentes escalas
     filtered_images = []

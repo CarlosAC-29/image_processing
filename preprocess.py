@@ -39,7 +39,7 @@ def estandarizar ():
             if "IR" in path :
                 IR_image = path
         
-        if T1_image and FLAIR_image and IR_image != None: 
+        if T1_image and IR_image != None: 
             st.title("Prerprocesar")
             image_T1 = nib.load(T1_image)
             image_T1_data = image_T1.get_fdata()
@@ -54,12 +54,16 @@ def estandarizar ():
             Denoised_t1 = medianFilterBorders(Estandarize_t1)
             Denoised_ir = medianFilterBorders(Estandarize_ir)
 
+            # Crear un contenedor vacío para la imagen
+            container = st.empty()
+
+            # Mostrar la imagen actualizada en el contenedor vacío
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
-            ax1.imshow(Denoised_t1[:,:,25])
+            ax1.imshow(Denoised_t1[:, :, 25])
             ax1.set_title('T1')
-            ax2.imshow(Denoised_ir[:,:,25])
+            ax2.imshow(Denoised_ir[:, :, 25])
             ax2.set_title('IR')
-            st.pyplot(fig)
+            container.pyplot(fig)
 
             # Obtener la información de afine de la imagen original
             affine_t1 = image_T1.affine
